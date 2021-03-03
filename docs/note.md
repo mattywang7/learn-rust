@@ -206,3 +206,88 @@ By using `let`, we can perform a few transformation on a value but have the vari
 
 The other difference between `mut` and shadowing is that because we're effectively creating a new variable when we use the `let` keyword again,
 we can change the type of the variable but reuse the same name.
+
+## Data Types
+Keep in mind that Rust is a statically typed language, which means it must know the types of all variables at compile time.
+
+### Scalar Types
+A *scalar* type represents a single value.
+Rust has four primary scalar types: integers, floating-point, numbers, Booleans, and characters.
+
+#### Integer Types
+`u32` -- unsigned integer that takes up 32 bits of space.
+
+Each variant can be either signed or unsigned and has an explicit size.
+
+Additionally, the `isize` and `usize` types depend on the kind of computer your program is running on:
+64 bits if you're on a 64-bit architecture and 32 bits if you're on a 32-bit architecture.
+
+Rust's defaults are generally good choices, and integer types default to `i32`:
+this type is generally the fastest, even on 64-bit systems.
+
+#### Floating-Point Types
+Rust's floating-point types are `f32` and `f64`, which are 32 bits and 64 bits in size, respectively.
+The default if `f64` because on modern CPUs it's roughly the same speed as `f32` but is capable of more precision.
+
+#### The Boolean Type
+The Boolean type in Rust has two possible values: `true` and `false`.
+Booleans are one byte in size.
+
+#### Character Types
+Rust's `char` type is four bytes in size and represents a Unicode Scalar Value.
+
+### Compound Types
+*Compound types* can group multiple values into one type.
+Rust has two primitive compound types: tuples and arrays.
+
+#### The Tuple Type
+In `()`.
+
+A tuple is a general way of grouping together a number of values with a variety of types into one compound type.
+Tuples have a fixed length: once declared, they cannot grow or shrink in size.
+
+Each position in the tuple has a type, and the types of the different values in the tuple don't have to be the same.
+
+To get the individual values out of a tuple, we can use pattern matching to destructure a tuple value, like:
+```rust
+fn main() {
+    let tup: (i32, f64, u8) = (500, 6.4, 1);
+    let (x, y, z) = tup;
+    println!("The value of y is {}", y);
+}
+```
+
+In addition to destructuring through pattern matching, we can access a tuple element directly by using a period(`.`) followed by the index of the value we want to access:
+
+#### The Array Type
+In `[]`.
+
+Unlike a tuple, every element of an array must have the same type.
+Arrays in Rust also have a fixed length, like tuples.
+
+Arrays are useful when you want your data allocated on the stack rather than the heap or when you want to ensure you always have a fixed number of elements.
+
+If you're unsure whether to use an array or a vector (provided by the standard library), you should probably use a vector.
+
+You would write an array's type by using square brackets, and within the brackets include the type of each element, a semicolon, 
+and then the number of elements in the array:
+```rust
+fn main() {
+    let a: [i32; 5] = [1, 2, 3, 4, 5];
+    let b = [3; 5];     // [value for all elements; size]
+}
+```
+
+You can access elements of an array using indexing:
+```rust
+fn main() {
+    let a = [1, 2, 3, 4, 5];
+    let first = a[0];
+    let second = a[1];
+}
+```
+
+When you attempt to access an element using indexing, Rust will check that the index you've specified is less than the array length.
+If the index is greater than or equal to the array length, Rust will panic.
+In many low-level language, this kind of check is not done, and when you provide an incorrect index, invalid memory can be accessed.
+Rust protects you against this kind of error by immediately exiting instead of allowing the memory access and continuing.
