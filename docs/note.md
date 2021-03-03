@@ -173,3 +173,36 @@ Switching from an `expect` call to a `match` expression is how you generally mov
 
 ## Variables and Mutability
 
+In Rust, the compiler guarantees that when you state that a value won't change, 
+it really won't change.
+That means that when you're reading and writing code, you don't have to keep track of how and where a value might change.
+Your code is thus easier to reason through.
+
+You aren't allowed to use `mut` with constants.
+Constants aren't just immutable by default -- they're always immutable.
+
+You declare constants using the `const` keyword instead of `let`, and the type of the value *must* be annotated.
+Constants can be declared in any scope, including the global scope, which makes them useful for values that many parts of code need to know about.
+
+The last difference is that constants may be set only to a constant expression,
+not the result of a function call or any other value that could only be computed at runtime.
+
+Constants are valid for the entire time a program runs, within the scope they were declared in,
+making them a useful choice for values in your application domain that multiple parts of the program might need to know about.
+
+### Shadowing
+We can shadow a variable by using the same variable's name and repeating the use of `let` keyword as follows:
+```rust
+fn main() {
+    let x = 5;
+    let x = x + 1;
+    let x = x * 2;
+    println!("{}", x);
+}
+```
+
+Shadowing is different from making the variable `mut`, because we'll get a compile-time error if we accidentally try to reassign to this variable without using `let`.
+By using `let`, we can perform a few transformation on a value but have the variable be immutable after those transformations have been completed.
+
+The other difference between `mut` and shadowing is that because we're effectively creating a new variable when we use the `let` keyword again,
+we can change the type of the variable but reuse the same name.
