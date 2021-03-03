@@ -168,3 +168,8 @@ Shadowing lets us reuse the `guess` variable name rather than forcing us to crea
 `u32` is a good default choice for a small positive number.
 
 Switching from an `expect` call to a `match` expression is how you generally move from crashing on an error to handling the error.
+
+# Common Programming Concepts
+
+## Variables and Mutability
+
