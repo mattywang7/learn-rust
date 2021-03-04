@@ -1,7 +1,8 @@
 fn main() {
-    let a = [1, 2, 3, 4, 5];
-    let index = 10;
-    let element = a[2];
-    println!("{}", element);
-    println!("{}", index);
+    let x = five();
+    println!("The value of x is {}", x);
+}
+
+fn five() -> i32 {
+    5
 }

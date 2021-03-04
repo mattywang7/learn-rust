@@ -291,3 +291,59 @@ When you attempt to access an element using indexing, Rust will check that the i
 If the index is greater than or equal to the array length, Rust will panic.
 In many low-level language, this kind of check is not done, and when you provide an incorrect index, invalid memory can be accessed.
 Rust protects you against this kind of error by immediately exiting instead of allowing the memory access and continuing.
+
+## Functions
+Rust code uses *snake case* as the conventional style for function and variable names.
+In snake case, all letters are lowercase and underscores separate words.
+
+Rust doesn't care where you define your functions, only that they're defined somewhere.
+
+In function signatures, you must declare the type of each parameter.
+This is a deliberate decision in Rust's design: requiring type annotations in function definitions means the compiler almost never needs you to use them elsewhere in the code to figure out what you mean.
+
+### Function Bodies Contain Statements and Expressions
+
+Rust is an expression-based language. *Statements* are instructions that perform some action and do not return a value.
+*Expressions* evaluate to a resulting value.
+
+Statements do not return values.
+Therefore, you can't assign a `let` statement to another variable; you'll get an error:
+```rust
+fn main() {
+    let x = (let x = 6);
+}
+```
+This is different from what happened in other languages, such as C and Ruby, where the assignment returns the value of the assignment.
+
+Expressions evaluate to something and make up most of the rest of the code that you'll write in Rust.
+Consider a simple math operation, such as `5 + 6`, which is an expression that evaluates to the value `11`.
+Calling a function is an expression. Calling a macro is an expression.
+The block `{}` we use to create new scopes, is an expression.
+```rust
+fn main() {
+    let x = 5;
+    let y = {
+        let x = 3;
+        x + 1
+    };
+    println!("The value of y is {}", y);
+}
+```
+Expressions do not include ending semicolons.
+If you add a semicolon to the end of an expression, you turn it into a statement, which will then not return a value.
+
+### Functions with Return Values
+We don't name return values, but we do declare their type after an arrow(`->`).
+
+In Rust, the return value of the function is synonymous with the value of the final expression in the block of the body of a function.
+You can return early from a function by using the `return` keyword and specifying a value, ut most functions return the last expression implicitly.
+```rust
+fn main() {
+    let x = five();
+    println!("The value of x is {}", x);
+}
+
+fn five() -> i32 {
+    5
+}
+```
