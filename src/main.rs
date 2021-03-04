@@ -1,8 +1,6 @@
 fn main() {
-    let x = five();
-    println!("The value of x is {}", x);
-}
-
-fn five() -> i32 {
-    5
+    for number in (1..4).rev() {
+        println!("value is : {}", number);
+    }
+    println!("LIFTOFF!!");
 }

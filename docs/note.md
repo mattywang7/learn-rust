@@ -347,3 +347,62 @@ fn five() -> i32 {
     5
 }
 ```
+
+## Control Flow
+Blocks of code associated with the conditions in `if` expression are sometimes called *arms*, just like `match`.
+
+It's also worth noting that the condition must be `bool`.
+If the condition is not a `bool`, we'll get an error.
+
+Because `if` is an expression, we can use it on the right side of a `let` statement:
+```rust
+fn main() {
+    let condition = true;
+    let number = if condition {5} else {6};
+}
+```
+Blocks of code evaluate to the last expression in them, and numbers by themselves are also expressions.
+The `if` and `else` must have the same value type.
+```rust
+fn main() {
+    let condition = true;
+    let number = if condition {5} else {"six"};
+}
+```
+This will not work because variables must have a single type.
+Rust needs to know at compile time what type the `number` variable is, definitely, so it can verify at compile time that its type is valid everywhere we use `number`.
+
+### Repeating Code with `loop`
+The `loop` keyword tells Rust to execute a block of code over and over again forever or until you explicitly tell it to stop.
+
+You can place the `break` keyword within the loop to tell the program when to stop executing the loop.
+
+One of the uses of a `loop` is to retry an operation you know might fail, such as checking whether a thread has completed its job.
+You might need to pass the result of that operation to the rest of your code.
+To do this, you can add the value you want returned after the `break` expression you use to stop the loop;
+that value will be returned out of the loop so you can use it:
+```rust
+fn main() {
+    let mut counter = 0;
+    let result = loop {
+        counter += 1;
+        if counter == 10 {
+            break counter * 2;
+        }
+    };
+    println!("{}", result);
+}
+```
+
+As a more concise alternative, you can use a `for` loop and execute some code for eqch item in a collection.
+```rust
+fn main() {
+    let a = [10, 20, 30, 40, 50];
+    for element in a.iter() {
+        println!("{}", element);
+    }
+}
+```
+We have now increased the safety of the code and eliminated the chance of bugs that might result from going beyond the end of the array or not going far enough and missing some items.
+
+The safety and conciseness of `for` loops make them the most commonly used loop construct in Rust.
