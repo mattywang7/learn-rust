@@ -581,3 +581,118 @@ fn takes_and_gives_back(a_string: String) -> String {
 }
 
 ```
+
+## References and Borrowing
+Here is how you would define and use a `calculate_length` function that has a reference to an object as a parameter instead of taking ownership of the value:
+```rust
+fn main() {
+    let s1 = String::from("hello");
+
+    let length = calculate_length(&s1);
+
+    println!("{}", length);
+}
+
+fn calculate_length(s: &String) -> usize {
+    s.len()
+}
+```
+
+The `&` are *references*, and they allow you to refer to some value without taking ownership of it.
+
+![Reference](./images/Reference.png)
+
+The `&s1` syntax lets us create a reference that refers to the value of `s1` but does not own it.
+Because it does not own it, the value it points to will not be dropped when the reference goes out of scope.
+When functions have references as parameters instead of the actual values,
+we won't need to return the values in order to give back ownership, because we never had ownership.
+
+We call having references as function parameters *borrowing*.
+
+Just as variables are immutable by default, so are references.
+We're not allowed to modify something we have a reference to.
+
+### Mutable Reference
+```rust
+fn main() {
+    let mut s = String::from("hello");
+    change(&mut s);
+}
+
+fn change(some_string: &mut String) {
+    some_string.push_str(", world");
+}
+```
+Mutable references have one big restriction: 
+you can have only one mutable reference to a particular piece of data in a particular scope.
+
+This code will fail:
+```rust
+fn main() {
+    let mut s = String::from("hello");
+
+    let r1 = &mut s;
+    let r2 = &mut s;
+
+    println!("{}, {}", r1, r2);
+}
+```
+The benefit of having this restriction is that Rust can prevent data races at compile time.
+A *data race* is similar to a race condition and happens when these three behaviors occur:
+- Two or more pointers access the same data at the same time.
+- At least one of the pointers is being used to write to the data.
+- There's no mechanism being used to synchronize access to the data.
+
+Rust prevents this problem from happening because it won't even compile code with data races.
+
+Note that a reference's scope starts from where it is introduced and continues through the last time
+that reference is used.
+For instance, this code will compile because the last usage of the immutable reference occurs before the mutable reference is introduced:
+```rust
+fn main() {
+    let mut s = String::from("hello");
+
+    let r1 = &s; // no problem
+    let r2 = &s; // no problem
+    println!("{}, {}", r1, r2);
+    // r1 and r2 are no longer used after this point
+
+    let r3 = &mut s; // no problem
+    println!("{}", r3);
+}
+```
+
+### Dangling References
+In languages with pointers, it's easy to erroneously create a *dangling pointer*, 
+a pointer that references a location in memory that may have been given to someone else,
+by freeing some memory while preserving a pointer to that memory.
+In Rust, by contrast, the compiler guarantees that references will never be dangling references:
+if you have a reference to some data, the compiler will ensure that the data will not
+got out of scope before the reference to the data does.
+
+Here is an example which Rust will prevent with a compile-time error:
+```rust
+fn main() {
+    let reference_to_nothing = dangle();
+}
+
+fn dangle() -> &String { // dangle returns a reference to a String
+    let s = String::from("hello"); // s is a new String
+
+    &s // we return a reference to the String, s
+} // Here, s goes out of scope, and is dropped. Its memory goes away.
+```
+This returned reference be pointing to an invalid `String`. That's no good and Rust won't let us do this.
+
+Solution:
+```rust
+fn no_dangle() -> String {
+    let s = String::from("hello");
+    s
+}
+```
+This works without any problems. Ownership is moved out, and nothing is deallocated.
+
+### The Rules of References
+- At any given time, you can have either one mutable reference or any number of immutable references.
+- References must always be valid.

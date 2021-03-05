@@ -1,13 +1,9 @@
 fn main() {
-    let s1 = String::from("hello");
-
-    let (s2, len) = calculate_length(s1);
-
-    println!("The length of {} is {}", s2, len);
+    let reference_to_nothing = dangle();
 }
 
-fn calculate_length(s: String) -> (String, usize) {
-    let length = s.len();
+fn dangle() -> &String {
+    let s = String::from("hello");
 
-    (s, length)
+    &s
 }
