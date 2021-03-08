@@ -696,3 +696,123 @@ This works without any problems. Ownership is moved out, and nothing is dealloca
 ### The Rules of References
 - At any given time, you can have either one mutable reference or any number of immutable references.
 - References must always be valid.
+
+## The Slice Type
+Another data type that does not have ownership is the *slice*.
+Slices let you reference a contiguous sequence of elements in a collection rather than the whole collection.
+
+```rust
+fn main() {
+    let mut s = String::from("hello world");
+    let word = first_word(&s); // word will get the value 5
+    s.clear(); // this empties the String, making it equal to ""
+    // word still has the value 5 here, but there's no more string that
+    // we could meaningfully use the value 5 with. word is now totally invalid!
+    println!("{}", word);
+}
+
+
+fn first_word(s: &String) -> usize {
+    let bytes = s.as_bytes();
+
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return i;
+        }
+    }
+    s.len()
+}
+```
+
+This program compiles without any errors and would also do so if we used `word` after calling `s.clear()`.
+Because `word` isn't connected to the state of `s` at all, `word` still contains the value `5`.
+We could ues that value `5` with the variable `s` to try to extract the first word out,
+but this would be a bug because the contents of `s` have changed since we saved `5` in `word`.
+
+### String Slices
+A *string slice* is a reference to part of a `string`.
+
+```rust
+fn main() {
+    let s = String::from("hello world");
+
+    let hello = &s[0..5];
+    let world = &s[6..11];
+
+    println!("{}, {}", hello, world);
+}
+```
+
+Internally, the slice data stores the starting position and the length of the slice,
+which corresponds to `ending_index` minus `starting_index`.
+
+The type that signifies "string slice" is written as `&str`.
+```rust
+fn first_word(s: &String) -> &str {
+    let bytes = s.as_bytes();
+
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return &s[0..i];
+        }
+    }
+    &s[..]
+}
+```
+Now when we call `first_word()`, we get back a single value that is tied to the underlying data.
+
+Remember from the borrowing rules that if we have an immutable reference to something, we cannot also take a mutable
+reference. Because `clear` needs to truncate the `String`, it needs to get a mutable reference.
+Rust disallows this, and compilation fails.
+```rust
+fn main() {
+    let mut s = String::from("hello world");
+    let word = first_word(&s);
+    s.clear();
+    println!("the first word is: {}", word);
+}
+
+fn first_word(s: &String) -> &str {
+    let bytes = s.as_bytes();
+
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return &s[0..i];
+        }
+    }
+    &s[..]
+}
+```
+
+### String Literals Are Slices
+Recall that we talked about string literals being stored inside the binary.
+```
+let s = "Hello, world";
+```
+The type of `s` here is `&str`: it's a slice pointing to that specific point of the binary.
+This is also why string literals are immutable; `&str` is an immutable reference.
+
+Defining a function to take a string slice instead of a reference to a `String` makes our API more general and useful without losing any functionality.
+
+```rust
+fn main() {
+    let my_string = String::from("hello world");
+    let word = first_word(&my_string[..]);
+    println!("{}", word);
+    let my_string_literals = "hello world";
+    let word = first_word(my_string_literals);
+    println!("{}", word);
+}
+
+fn first_word(s: &str) -> &str {
+    let bytes = s.as_bytes();
+
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return &s[0..i];
+        }
+    }
+    &s[..]
+}
+```
+

@@ -1,9 +1,19 @@
 fn main() {
-    let reference_to_nothing = dangle();
+    let my_string = String::from("hello world");
+    let word = first_word(&my_string[..]);
+    println!("{}", word);
+    let my_string_literals = "hello world";
+    let word = first_word(my_string_literals);
+    println!("{}", word);
 }
 
-fn dangle() -> &String {
-    let s = String::from("hello");
+fn first_word(s: &str) -> &str {
+    let bytes = s.as_bytes();
 
-    &s
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return &s[0..i];
+        }
+    }
+    &s[..]
 }
