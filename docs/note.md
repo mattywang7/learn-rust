@@ -816,3 +816,90 @@ fn first_word(s: &str) -> &str {
 }
 ```
 
+# Using Structs to Structure Related Data
+## Defining and Instantiating Structs
+As a result of these names, structs are more flexible than tuples:
+you don't have to rely on the order of the data to specify or access the values of an instance.
+```rust
+struct User {
+    username: String,
+    email: String,
+    sign_in_count: u64,
+    active: bool,
+}
+```
+
+When creating an instance of that struct by specifying concrete values for each of the fields,
+we don't have to specify the fields in the same order in which we declared them in the struct.
+```rust
+struct User {
+    username: String,
+    email: String,
+    sign_in_count: u64,
+    active: bool,
+}
+
+fn main() {
+    let user1 = User {
+        email: String::from("someone@example.com"),
+        username: String::from("someusername123"),
+        active: true,
+        sign_in_count: 1,
+    };
+}
+```
+
+If we want to change fields of an instance, the entire instance must be mutable;
+Rust doesn't allow us to mark only certain fields as mutable.
+
+### Using the Field Init Shorthand when Variables and Fields Have the Same Name
+```rust
+fn build_user(email: String, username: String) -> User {
+    User {
+        email,
+        username,
+        active: true,
+        sign_in_count: 1,
+    }
+}
+```
+
+### Creating Instances From Other Instances With Struct Update Syntax
+It's often useful to create a new instance of a struct that uses most of an old instance's values but
+changes some.
+
+Using struct update syntax, we can achieve the same effect with less code.
+The syntax `..` specifies that the remaining fields not explicityly set should have the same value as the fields in the given instance.
+
+```rust
+fn main() {
+    let mut user1 = build_user(String::from("someone@example.com"), String::from("John"));
+
+    let user2 = User {
+        email: String::from("another@example.com"),
+        username: String::from("anotherusername"),
+        ..user1
+    };
+
+    println!("{}", user2.sign_in_count);
+}
+```
+
+### Using Tuple Structs without Named Fields to Create Different Types
+You can also define struct aht look similar to tuples, called *tuple structs*.
+Tuple structs have the added meaning the struct name provides but don't have names associated with their fields.
+```rust
+fn main() {
+    struct Color(i32, i32, i32);
+    struct Point(i32, i32, i32);
+    
+    let black = Color(0, 0, 0);
+    let origin = Point(0, 0, 0);
+}
+```
+Note that the `black` and `origin` values are different types, because they're instances of different tuple structs.
+
+### Ownership of Struct Data
+In the `User` example, we used the owned `String` type rather than the `&str` string slice type.
+This is a deliberate choice because we want instances of this struct to own all of its data and for that data to be valid 
+for as long as the entire struct is valid.

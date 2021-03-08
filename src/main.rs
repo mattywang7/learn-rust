@@ -1,19 +1,24 @@
 fn main() {
-    let my_string = String::from("hello world");
-    let word = first_word(&my_string[..]);
-    println!("{}", word);
-    let my_string_literals = "hello world";
-    let word = first_word(my_string_literals);
-    println!("{}", word);
+    let black = Color(0, 0, 0);
+    let origin = Point(0, 0, 0);
+    println!("{}", black.1);
 }
 
-fn first_word(s: &str) -> &str {
-    let bytes = s.as_bytes();
+struct User {
+    username: String,
+    email: String,
+    sign_in_count: u64,
+    active: bool,
+}
 
-    for (i, &item) in bytes.iter().enumerate() {
-        if item == b' ' {
-            return &s[0..i];
-        }
+fn build_user(email: String, username: String) -> User {
+    User {
+        email,
+        username,
+        active: true,
+        sign_in_count: 1,
     }
-    &s[..]
 }
+
+struct Color(i32, i32, i32);
+struct Point(i32, i32, i32);
